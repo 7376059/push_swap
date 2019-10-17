@@ -25,23 +25,30 @@ typedef struct s_stack
 
 	int b_dir;
 	int a_dir;
+	int a_index;
 	int a_spin;
 	int b_spin;
-	int index;
 	
 }				t_stack ;
 
+int g_flag;
 
 t_lest *create_elem(int data);
-int count_for_elem(int index, t_stack *stack);
+t_stack *count_for_elem(int index, t_stack *stack);
+t_stack *do_algo(t_stack *stack);
+t_stack *count_for_all(t_stack *stack);
+t_stack *all_algo(t_stack *stack);
+void print_stack(t_stack *stack);
 
+
+t_stack *sa(t_stack *stack);	
 t_stack *pb(t_stack *stack);
 t_stack *pa(t_stack *stack);
-t_stack *ra(t_stack *stack);
-t_stack *rb(t_stack *stack);
+t_stack *ra(int i, t_stack *stack);
+t_stack *rb(int i, t_stack *stack);
 t_stack *rr(t_stack *stack);
-t_stack *rra(t_stack *stack);
-t_stack *rrb(t_stack *stack);
+t_stack *rra(int i, t_stack *stack);
+t_stack *rrb(int i ,t_stack *stack);
 t_stack *rrr(t_stack *stack);
 
 /*
