@@ -1,104 +1,98 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgrady <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/03 15:05:20 by dgrady            #+#    #+#             */
+/*   Updated: 2019/11/04 20:48:08 by dgrady           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-t_lest *create_elem(int data)
+t_stack		*functions_manager(char *str, t_stack *stack, t_inst *inst)
 {
-	t_lest *rez;
-	
-	rez = (t_lest*)malloc(sizeof(t_lest));
-	rez->data = data;
-	rez->next = NULL;
-	return (rez);
-}
-
-t_lest *init_a(char *str)
-{
-	t_lest *rez;
-	t_lest *start;
-	int data;
-	int i;
-	
-	i = 0;
-	while (str[i])
-	{
-		data = atoi(&str[i]);
-		if (i == 0)
-		{
-			rez = create_elem(data);
-			start = rez;
-		}
-		else
-		{
-			rez->next = create_elem(data);
-			rez = rez->next;
-		}
-		if (str[i] == '-')
-			i++;
-		while(isdigit(str[i]))
-			i++;
-		while(isspace(str[i]))
-            i++;
-	}
-	return (start);
-}
-
-t_stack *init_stack(char *str)
-{
-    t_stack *rez;
-
-    rez = (t_stack*)malloc(sizeof(t_stack));
-    rez->a = init_a(str);
-    rez->b = NULL;
-    rez->b_dir = 0;
-    rez->a_dir = 0;
-    rez->a_spin = 0;
-    rez->b_spin = 0;
-	rez->a_index = 0;
-    return (rez);
-}
-
-t_stack *rotate_to_min(t_stack *stack)
-{
-	t_lest *temp;
-	int min;
-	int min_index;
-	int i;
-
-	temp = stack->a;
-	i = 0;
-	min = temp->data;
-	min_index = 0;
-	while(temp)
-	{
-		if (min < temp->data)
-		{
-			min = temp->data;
-			min_index = i;
-		}
-		temp = temp->next;
-		i++;
-	}
-
-	if (i / 2 > min_index)
-	{
-		i = min_index + 1;
-		while (i-- > 0)
-			stack = ra(1, stack);
-	}
+	if (ft_strcmp(str, "pa") == 0)
+		stack = pa(stack);
+	else if (ft_strcmp(str, "pb") == 0)
+		stack = pb(stack);
+	else if (ft_strcmp(str, "sb") == 0)
+		stack = sb(stack);
+	else if (ft_strcmp(str, "sa") == 0)
+		stack = sa(stack);
+	else if (ft_strcmp(str, "ra") == 0)
+		stack = ra(stack);
+	else if (ft_strcmp(str, "rb") == 0)
+		stack = rb(stack);
+	else if (ft_strcmp(str, "rr") == 0)
+		stack = rr(stack);
+	else if (ft_strcmp(str, "rra") == 0)
+		stack = rra(stack);
+	else if (ft_strcmp(str, "rrb") == 0)
+		stack = rrb(stack);
+	else if (ft_strcmp(str, "rrr") == 0)
+		stack = rrr(stack);
 	else
-	{
-		i = i - min_index - 1 ;
-		while (i-- > 0)
-			stack = rra(1, stack);
-	}
+		not_valid_inst(stack, inst);
 	return (stack);
 }
 
-
-int main(int ac, char **av)
+void		execute_inst(t_inst *inst, t_stack *stack)
 {
-	g_flag = 0;
-	t_stack *stack;	
-	stack = init_stack(av[1]);
-	if (!g_flag)
-		print_stack(stack);
+	t_inst *temp;
+
+	temp = inst;
+	while (temp)
+	{
+		stack = functions_manager(temp->str, stack, inst);
+		temp = temp->next;
+	}
+	if (check_if_sorted(stack) == 1)
+		write(1, "OK\n", 3);
+	else
+		write(1, "Error\n", 6);
+	if (inst)
+		clear_inst(inst);
+	clear_stack(stack);
+}
+
+void		read_inst(t_stack *stack)
+{
+	char	*line;
+	t_inst	*start;
+	t_inst	*rez;
+	int		i;
+
+	i = 0;
+	while (get_next_line(0, &line))
+	{
+		if (i == 0)
+		{
+			rez = create_inst(line);
+			start = rez;
+			i++;
+			continue ;
+		}
+		rez->next = create_inst(line);
+		rez = rez->next;
+	}
+	if (i == 0)
+		execute_inst(NULL, stack);
+	execute_inst(start, stack);
+}
+
+int			main(int ac, char **av)
+{
+	t_stack *stack;
+
+	if (ac == 1)
+		return (0);
+	stack = init_stack();
+	stack->a = init_a(av);
+	if (stack->a == NULL)
+		clear_stack(stack);
+	read_inst(stack);
+	return (0);
 }
